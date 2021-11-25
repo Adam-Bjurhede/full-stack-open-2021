@@ -5,24 +5,34 @@ const FeedbackBtn = ({ text, handleClick }) => {
 };
 
 const Statistics = ({ stats, good, bad, neutral }) => {
-	console.log(stats);
 	return (
 		<>
 			<h2>Statistics</h2>
 
 			{stats.all > 0 ? (
-				<ul>
-					<li>Good: {good}</li>
-					<li>Neutral: {neutral}</li>
-					<li>Bad: {bad}</li>
-					<li>All: {stats.all}</li>
-					<li>Avarage: {stats.avarage}</li>
-					<li>Positive: {stats.positive}</li>
-				</ul>
+				<table>
+					<tbody>
+						<StatisticLine text='Good' value={good} />
+						<StatisticLine text='Neutral' value={neutral} />
+						<StatisticLine text='Bad' value={bad} />
+						<StatisticLine text='All' value={stats.all} />
+						<StatisticLine text='Avarage' value={stats.avarage} />
+						<StatisticLine text='Positive' value={stats.positive} />
+					</tbody>
+				</table>
 			) : (
 				<p> No feedback given</p>
 			)}
 		</>
+	);
+};
+
+const StatisticLine = ({ text, value }) => {
+	return (
+		<tr>
+			<td>{text}</td>
+			<td>{value}</td>
+		</tr>
 	);
 };
 
@@ -37,23 +47,17 @@ const App = () => {
 		positive: (good + neutral) / (good + bad + neutral),
 	};
 
-	const updateGood = () => {
-		setGood(good + 1);
-	};
-	const updateBad = () => {
-		setBad(bad + 1);
-	};
-	const updateNeutral = () => {
-		setNeutral(neutral + 1);
+	const increment = (state, setState) => {
+		setState(state + 1);
 	};
 
 	return (
 		<>
 			<h1>Give feedback</h1>
 
-			<FeedbackBtn text='Good' handleClick={updateGood} />
-			<FeedbackBtn text='Neutral' handleClick={updateNeutral} />
-			<FeedbackBtn text='Bad' handleClick={updateBad} />
+			<FeedbackBtn text='Good' handleClick={() => increment(good, setGood)} />
+			<FeedbackBtn text='Neutral' handleClick={() => increment(neutral, setNeutral)} />
+			<FeedbackBtn text='Bad' handleClick={() => increment(bad, setBad)} />
 			<Statistics stats={stats} good={good} bad={bad} neutral={neutral} />
 		</>
 	);
