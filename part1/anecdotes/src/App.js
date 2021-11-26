@@ -22,15 +22,24 @@ const App = () => {
 
 	const vote = () => {
 		const votesCopy = { ...votes };
-		votesCopy[selected]++;
+		votesCopy[selected] += 1;
 		setvotes(votesCopy);
+	};
+
+	const findMostVotes = () => {
+		const mostVotes = Object.keys(votes).reduce((a, b) => (votes[a] > votes[b] ? a : b));
+
+		return anecdotes[mostVotes];
 	};
 
 	return (
 		<>
+			<h2>Anecdote of the day</h2>
 			<div>{anecdotes[selected]}</div>
 			<button onClick={nextAnecdote}>Next anecdote </button>
 			<button onClick={vote}>Vote </button>
+			<h2>Anecdote with most votes</h2>
+			<p>{findMostVotes()}</p>
 		</>
 	);
 };
