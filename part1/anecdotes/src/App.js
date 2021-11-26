@@ -1,5 +1,17 @@
 import React, { useState } from 'react';
 
+const Votes = ({ votes, type }) => {
+	return <p>Has {votes[type]} votes</p>;
+};
+
+const Button = ({ text, handleClick }) => {
+	return <button onClick={handleClick}>{text}</button>;
+};
+
+const Anecdote = ({ anecdotes, type }) => {
+	return <p>{anecdotes[type]}</p>;
+};
+
 const App = () => {
 	const anecdotes = [
 		'If it hurts, do it more often',
@@ -26,26 +38,20 @@ const App = () => {
 		setvotes(votesCopy);
 	};
 
-	const findMostVotes = () => {
-		const mostVotes = Object.keys(votes).reduce((a, b) => (votes[a] > votes[b] ? a : b));
-
-		return (
-			<>
-				<p> {anecdotes[mostVotes]}</p>
-				<p>Has {votes[mostVotes]} votes</p>
-			</>
-		);
-	};
+	const mostVotes = Object.keys(votes).reduce((a, b) => (votes[a] > votes[b] ? a : b));
 
 	return (
 		<>
 			<h2>Anecdote of the day</h2>
-			<p>{anecdotes[selected]}</p>
-			<p> Has {votes[selected]} votes</p>
-			<button onClick={nextAnecdote}>Next anecdote </button>
-			<button onClick={vote}>Vote </button>
+			<Anecdote anecdotes={anecdotes} type={selected} />
+			<Votes votes={votes} type={selected} />
+
+			<Button text='Next anecdote' handleClick={() => nextAnecdote()} />
+			<Button text='Vote' handleClick={() => vote()} />
+
 			<h2>Anecdote with most votes</h2>
-			{findMostVotes()}
+			<Anecdote anecdotes={anecdotes} type={mostVotes} />
+			<Votes votes={votes} type={mostVotes} />
 		</>
 	);
 };
