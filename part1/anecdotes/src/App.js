@@ -29,17 +29,23 @@ const App = () => {
 	const findMostVotes = () => {
 		const mostVotes = Object.keys(votes).reduce((a, b) => (votes[a] > votes[b] ? a : b));
 
-		return anecdotes[mostVotes];
+		return (
+			<>
+				<p> {anecdotes[mostVotes]}</p>
+				<p>Has {votes[mostVotes]} votes</p>
+			</>
+		);
 	};
 
 	return (
 		<>
 			<h2>Anecdote of the day</h2>
-			<div>{anecdotes[selected]}</div>
+			<p>{anecdotes[selected]}</p>
+			<p> Has {votes[selected]} votes</p>
 			<button onClick={nextAnecdote}>Next anecdote </button>
 			<button onClick={vote}>Vote </button>
 			<h2>Anecdote with most votes</h2>
-			<p>{findMostVotes()}</p>
+			{findMostVotes()}
 		</>
 	);
 };
