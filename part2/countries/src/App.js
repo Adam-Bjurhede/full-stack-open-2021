@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import SearchInput from './components/SearchInput';
-import DisplayCountries from './components/DisplayCountries';
-import DisplayOneCountry from './components/DisplayOneCountry';
+import Countries from './components/Countries';
+import Message from './components/Message';
 
 function App() {
 	const [search, setSearch] = useState('');
@@ -36,10 +36,10 @@ function App() {
 		<div>
 			<SearchInput handleChange={handleChange} search={search} />
 
-			{filteredCountries.length !== 1 ? (
-				<DisplayCountries search={search} filteredCountries={filteredCountries} handleClick={handleClick} />
+			{filteredCountries.length <= 10 && filteredCountries.length >= 1 ? (
+				<Countries search={search} filteredCountries={filteredCountries} handleClick={handleClick} />
 			) : (
-				<DisplayOneCountry country={filteredCountries[0]} />
+				<Message numberOfCountries={filteredCountries.length} />
 			)}
 		</div>
 	);

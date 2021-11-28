@@ -1,7 +1,8 @@
 import React from 'react';
+import OneCountry from './OneCountry';
 
-function DisplayCountries({ filteredCountries, handleClick }) {
-	return filteredCountries.length <= 10 ? (
+function Countries({ filteredCountries, handleClick }) {
+	return filteredCountries.length !== 1 ? (
 		filteredCountries.map((country) => {
 			return (
 				<div>
@@ -11,8 +12,8 @@ function DisplayCountries({ filteredCountries, handleClick }) {
 			);
 		})
 	) : (
-		<p>To many, specify another filter</p>
+		<OneCountry country={filteredCountries[0]} />
 	);
 }
 
-export default DisplayCountries;
+export default Countries;

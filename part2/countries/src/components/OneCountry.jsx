@@ -1,6 +1,6 @@
 import React from 'react';
 
-function DisplayOneCountry({ country }) {
+function OneCountry({ country }) {
 	return (
 		<div key={country.numericCode}>
 			<h1>{country.name}</h1>
@@ -19,4 +19,4 @@ function DisplayOneCountry({ country }) {
 	);
 }
 
-export default DisplayOneCountry;
+export default OneCountry;
