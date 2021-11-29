@@ -5,7 +5,7 @@ function Countries({ filteredCountries, handleClick }) {
 	return filteredCountries.length !== 1 ? (
 		filteredCountries.map((country) => {
 			return (
-				<div>
+				<div key={country.numericCode}>
 					<h2>{country.name}</h2>
 					<button onClick={() => handleClick(country)}>Show</button>
 				</div>
