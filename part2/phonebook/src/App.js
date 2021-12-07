@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
+import phonebook from './services/persons';
 
 const App = () => {
 	//Fetch inital data
+
 	useEffect(() => {
-		axios.get('http://localhost:3001/persons').then((result) => {
-			setPersons(result.data);
+		phonebook.getAll().then((initialPersons) => {
+			setPersons(initialPersons);
 		});
 	}, []);
 
@@ -21,18 +22,27 @@ const App = () => {
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		const personExists = persons.some((person) => person.name.toLowerCase() === newName.toLowerCase());
-
-		if (personExists) {
-			return alert(`Person ${newName} already exist in phonebook`);
-		}
-
 		const newPerson = {
 			name: newName,
 			number: newNumber,
 		};
 
-		setPersons(persons.concat(newPerson));
+		const personExists = persons.find((person) => person.name.toLowerCase() === newName.toLowerCase());
+
+		if (personExists) {
+			if (
+				window.confirm(`${personExists.name} is already added to phonebook, replace the old number with the new one?`)
+			) {
+				phonebook.update(personExists.id, newPerson).then((result) => {
+					return setPersons(persons.map((person) => (person.id !== personExists.id ? person : result)));
+				});
+			}
+		} else {
+			phonebook.create(newPerson).then((result) => {
+				setPersons(persons.concat(result));
+			});
+		}
+
 		setNewName('');
 		setNewNumber('');
 	};
@@ -42,6 +52,14 @@ const App = () => {
 	const handleNumberChange = (e) => setNewNumber(e.target.value);
 
 	const handleFilterChange = (e) => setFilterString(e.target.value);
+
+	const handleDelete = (personId) => {
+		if (window.confirm('Are you sure you wish to delete this person from phonebook?')) {
+			phonebook.remove(personId);
+			setPersons(persons.filter((person) => person.id !== personId));
+		}
+		return;
+	};
 
 	return (
 		<div>
@@ -58,7 +76,7 @@ const App = () => {
 			/>
 
 			<h2>Numbers</h2>
-			<Persons persons={persons} filterString={filterString} />
+			<Persons persons={persons} filterString={filterString} handleDelete={handleDelete} />
 		</div>
 	);
 };
