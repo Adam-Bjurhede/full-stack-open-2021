@@ -32,13 +32,9 @@ const remove = (id) => {
 
 const update = (id, newObject) => {
 	const request = axios.put(baseUrl + id, newObject);
-	return request
-		.then((result) => {
-			return result.data;
-		})
-		.catch((error) => {
-			console.log(error);
-		});
+	return request.then((result) => {
+		return result.data;
+	});
 };
 
 const phonebook = {

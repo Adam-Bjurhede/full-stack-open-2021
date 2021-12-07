@@ -4,10 +4,9 @@ import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
 import phonebook from './services/persons';
+import Notification from './components/Notification';
 
 const App = () => {
-	//Fetch inital data
-
 	useEffect(() => {
 		phonebook.getAll().then((initialPersons) => {
 			setPersons(initialPersons);
@@ -18,11 +17,12 @@ const App = () => {
 	const [newName, setNewName] = useState('');
 	const [newNumber, setNewNumber] = useState('');
 	const [filterString, setFilterString] = useState('');
+	const [statusMessage, setStatusMessage] = useState({ message: null, error: false });
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
 
-		const newPerson = {
+		const personObject = {
 			name: newName,
 			number: newNumber,
 		};
@@ -33,13 +33,33 @@ const App = () => {
 			if (
 				window.confirm(`${personExists.name} is already added to phonebook, replace the old number with the new one?`)
 			) {
-				phonebook.update(personExists.id, newPerson).then((result) => {
-					return setPersons(persons.map((person) => (person.id !== personExists.id ? person : result)));
-				});
+				phonebook
+					.update(personExists.id, personObject)
+					.then((result) => {
+						setPersons(persons.map((person) => (person.id !== personExists.id ? person : result)));
+						setStatusMessage({ message: `${personExists.name}'s number was succesfully updated`, error: false });
+					})
+					.catch((error) => {
+						console.log('Something went wrong');
+						setPersons(
+							persons.filter((person) => {
+								return person.id !== personExists.id;
+							})
+						);
+						setStatusMessage({ message: 'Person was already deleted', error: true });
+					});
+
+				setTimeout(() => {
+					setStatusMessage({ message: null, error: null });
+				}, 5000);
 			}
 		} else {
-			phonebook.create(newPerson).then((result) => {
+			phonebook.create(personObject).then((result) => {
 				setPersons(persons.concat(result));
+				setStatusMessage({ message: `${result.name} was succesfully added to phonebook`, error: false });
+				setTimeout(() => {
+					setStatusMessage({ message: null, error: null });
+				}, 5000);
 			});
 		}
 
@@ -64,6 +84,7 @@ const App = () => {
 	return (
 		<div>
 			<h2>Phonebook</h2>
+			<Notification message={statusMessage.message} error={statusMessage.error} />
 			<Filter handleChange={handleFilterChange} filterString={filterString} />
 
 			<h3>Add a New</h3>
