@@ -31,22 +31,28 @@ const App = () => {
 
 		if (personExists) {
 			if (
-				window.confirm(`${personExists.name} is already added to phonebook, replace the old number with the new one?`)
+				window.confirm(
+					`${personExists.name} is already added to phonebook, replace the old number with the new one?`
+				)
 			) {
 				phonebook
 					.update(personExists.id, personObject)
 					.then((result) => {
 						setPersons(persons.map((person) => (person.id !== personExists.id ? person : result)));
-						setStatusMessage({ message: `${personExists.name}'s number was succesfully updated`, error: false });
+						setStatusMessage({
+							message: `${personExists.name}'s number was succesfully updated`,
+							error: false,
+						});
 					})
 					.catch((error) => {
-						console.log('Something went wrong');
-						setPersons(
-							persons.filter((person) => {
-								return person.id !== personExists.id;
-							})
-						);
-						setStatusMessage({ message: 'Person was already deleted', error: true });
+						console.log(error);
+						if (error.response.status === 404) {
+							setPersons(persons.filter((person) => person.id !== personExists.id));
+						}
+						setStatusMessage({ message: error.response.data.error, error: true });
+						setTimeout(() => {
+							setStatusMessage({ message: null, error: null });
+						}, 5000);
 					});
 
 				setTimeout(() => {
@@ -54,13 +60,22 @@ const App = () => {
 				}, 5000);
 			}
 		} else {
-			phonebook.create(personObject).then((result) => {
-				setPersons(persons.concat(result));
-				setStatusMessage({ message: `${result.name} was succesfully added to phonebook`, error: false });
-				setTimeout(() => {
-					setStatusMessage({ message: null, error: null });
-				}, 5000);
-			});
+			phonebook
+				.create(personObject)
+				.then((result) => {
+					setPersons(persons.concat(result));
+					setStatusMessage({ message: `${result.name} was succesfully added to phonebook`, error: false });
+					setTimeout(() => {
+						setStatusMessage({ message: null, error: null });
+					}, 5000);
+				})
+				.catch((error) => {
+					console.log(error);
+					setStatusMessage({ message: error.response.data.error, error: true });
+					setTimeout(() => {
+						setStatusMessage({ message: null, error: null });
+					}, 5000);
+				});
 		}
 
 		setNewName('');

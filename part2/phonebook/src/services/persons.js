@@ -10,30 +10,20 @@ const getAll = () => {
 
 const create = (newObject) => {
 	const request = axios.post(baseUrl, newObject);
-	return request
-		.then((response) => {
-			return response.data;
-		})
-		.catch((error) => {
-			console.log('failed', error);
-		});
+	return request.then((response) => {
+		return response.data;
+	});
 };
 
 const remove = (id) => {
 	const request = axios.delete(baseUrl + id);
-	request
-		.then((response) => {
-			console.log(response);
-		})
-		.catch((error) => {
-			console.log('failed', error);
-		});
+	request.then((response) => {});
 };
 
 const update = (id, newObject) => {
 	const request = axios.put(baseUrl + id, newObject);
-	return request.then((result) => {
-		return result.data;
+	return request.then((response) => {
+		return response.data;
 	});
 };
 
