@@ -128,6 +128,7 @@ describe('Author with most blogs', () => {
 		expect(result).toEqual(null);
 	});
 });
+
 describe('Author with most total likes', () => {
 	test('array with more than one blog', () => {
 		const result = listHelper.mostLikes(blogs);
