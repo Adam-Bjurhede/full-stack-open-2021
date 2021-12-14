@@ -1,4 +1,3 @@
-const http = require('http');
 const config = require('./utils/config');
 const blogsRouter = require('./controllers/blogs');
 const express = require('express');
@@ -6,12 +5,16 @@ const app = express();
 const cors = require('cors');
 const mongoose = require('mongoose');
 
-mongoose
-	.connect(config.MONGODB_URI)
-	.then(() => {
+async function connectDB() {
+	try {
+		await mongoose.connect(config.MONGODB_URI);
+
 		console.log('Connected to MongoDB');
-	})
-	.catch((error) => console.log('Error connectiong to MongoDB', error));
+	} catch (err) {
+		console.log('Error connectiong to MongoDB', error);
+	}
+}
+connectDB();
 
 app.use(cors());
 app.use(express.json());
