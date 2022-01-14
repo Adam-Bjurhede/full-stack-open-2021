@@ -3,7 +3,20 @@ const supertest = require('supertest');
 const app = require('../app');
 const api = supertest(app);
 const Blog = require('../models/blog');
-const helper = require('./test_helpter');
+const User = require('../models/user');
+const helper = require('./test_helper');
+
+beforeAll(async () => {
+	await User.deleteMany({});
+
+	const user = {
+		username: 'Adam',
+		name: 'Adam B',
+		password: 'pwd123',
+	};
+
+	await api.post('/api/users').send(user);
+});
 
 beforeEach(async () => {
 	await Blog.deleteMany({});
@@ -32,6 +45,21 @@ describe('When fetching blogs', () => {
 });
 
 describe('When creating blogs', () => {
+	beforeEach(async () => {
+		token = '';
+		const userCredentials = {
+			username: 'Adam',
+			password: 'pwd123',
+		};
+
+		const logIn = await api
+			.post('/api/login')
+			.send(userCredentials)
+			.expect('Content-Type', /application\/json/);
+
+		token = logIn.body.token;
+	});
+
 	it('Creates a new blog post', async () => {
 		const newBlog = {
 			title: 'Test Blog',
@@ -43,6 +71,7 @@ describe('When creating blogs', () => {
 		await api
 			.post('/api/blogs')
 			.send(newBlog)
+			.set({ Authorization: `bearer ${token}` })
 			.expect(201)
 			.expect('Content-Type', /application\/json/);
 
@@ -64,11 +93,11 @@ describe('When creating blogs', () => {
 
 		await api
 			.post('/api/blogs')
+			.set({ Authorization: `bearer ${token}` })
 			.send(newBlog)
 			.expect(201)
 			.expect('Content-Type', /application\/json/);
 
-		// const response = await api.get('/api/blogs');
 		const blogsAtEnd = await helper.blogsInDb();
 
 		expect(blogsAtEnd.at(-1).likes).toBe(0);
@@ -80,15 +109,60 @@ describe('When creating blogs', () => {
 			likes: 125,
 		};
 
-		await api.post('/api/blogs').send(newBlog).expect(400);
+		await api
+			.post('/api/blogs')
+			.set({ Authorization: `bearer ${token}` })
+			.send(newBlog)
+			.expect(400);
+	});
+	it('Responds with 401 Unauthorized if token is not provided', async () => {
+		const newBlog = {
+			author: 'Testarn',
+			likes: 125,
+		};
+
+		await api.post('/api/blogs').send(newBlog).expect(401);
 	});
 });
 
 describe('When deleting blogs', () => {
+	beforeEach(async () => {
+		token = '';
+		deleteId = '';
+		const userCredentials = {
+			username: 'Adam',
+			password: 'pwd123',
+		};
+
+		const logIn = await api
+			.post('/api/login')
+			.send(userCredentials)
+			.expect('Content-Type', /application\/json/);
+
+		token = logIn.body.token;
+
+		const deleteThisBlog = {
+			title: 'Lord of the codes',
+			author: 'Mark',
+			url: 'www.mark.se',
+			likes: 42,
+		};
+
+		const newBlog = await api
+			.post('/api/blogs')
+			.send(deleteThisBlog)
+			.set({ Authorization: `bearer ${token}` })
+			.expect(201);
+
+		deleteId = newBlog.body.id;
+	});
 	it('One blog is deleted', async () => {
 		const blogsAtStart = await helper.blogsInDb();
-		const testId = blogsAtStart[0].id;
-		await api.delete(`/api/blogs/${testId}`).expect(204);
+
+		await api
+			.delete(`/api/blogs/${deleteId}`)
+			.set({ Authorization: `bearer ${token}` })
+			.expect(204);
 
 		const blogsAtEnd = await helper.blogsInDb();
 		expect(blogsAtEnd).toHaveLength(blogsAtStart.length - 1);
