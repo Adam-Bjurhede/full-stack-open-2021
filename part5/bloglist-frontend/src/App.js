@@ -5,6 +5,7 @@ import LoginForm from './components/LoginForm';
 import blogService from './services/blogs';
 import loginService from './services/login';
 import logOut from './services/logOut';
+import Togglable from './components/Togglable';
 
 const App = () => {
 	//All blogs
@@ -78,22 +79,26 @@ const App = () => {
 		}
 	}
 
-	if (!user) {
+	const loginForm = () => {
 		return (
-			<>
+			<div>
 				<h2>Log in to application</h2>
-
+				<Togglable buttonLabel='Show Form'>
+					<LoginForm
+						username={username}
+						setUsername={setUsername}
+						password={password}
+						setPassword={setPassword}
+						handleLogin={handleLogin}
+					/>
+				</Togglable>
 				{errorMessage && <h4 style={{ color: 'tomato', border: '2px solid tomato' }}>{errorMessage}</h4>}
-
-				<LoginForm
-					username={username}
-					setUsername={setUsername}
-					password={password}
-					setPassword={setPassword}
-					handleLogin={handleLogin}
-				/>
-			</>
+			</div>
 		);
+	};
+
+	if (!user) {
+		return loginForm();
 	}
 
 	return (
