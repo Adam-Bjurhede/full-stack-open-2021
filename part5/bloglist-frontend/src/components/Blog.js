@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import blogService from '../services/blogs';
 
-const Blog = ({ blog, deleteBlog }) => {
+const Blog = ({ blog, deleteBlog, updateBlog }) => {
     const [showInfo, setShowInfo] = useState(false);
-    const [blogToShow, setBlogToShow] = useState(blog);
+    // const [blog, setBlog] = useState(blog);
 
     const blogStyle = {
         paddingTop: 10,
@@ -14,18 +13,12 @@ const Blog = ({ blog, deleteBlog }) => {
     };
 
     const handleLikeClick = async () => {
-        const res = await blogService.updateBlog(
-            {
-                user: blogToShow.user,
-                likes: blogToShow.likes + 1,
-                author: blogToShow.author,
-                title: blogToShow.title,
-                url: blogToShow.url,
-            },
-            blog.id
-        );
-
-        return setBlogToShow(res);
+        try {
+            const blogToUpdate = { ...blog, likes: blog.likes + 1 };
+            await updateBlog(blogToUpdate, blog.id);
+        } catch (error) {
+            console.log(error);
+        }
     };
     const handleRemoveClick = async () => {
         await deleteBlog(blog.id);
@@ -34,11 +27,11 @@ const Blog = ({ blog, deleteBlog }) => {
     const moreInfo = () => {
         return (
             <>
-                <p className='url'>{blogToShow.url}</p>
+                <p className='url'>{blog.url}</p>
                 <p>
-                    Likes: {blogToShow.likes} <button onClick={handleLikeClick}>Like</button>{' '}
+                    Likes: {blog.likes} <button onClick={handleLikeClick}>Like</button>{' '}
                 </p>
-                <p>{blogToShow.author}</p>
+                <p>{blog.author}</p>
                 <button onClick={handleRemoveClick}>Remove</button>
             </>
         );

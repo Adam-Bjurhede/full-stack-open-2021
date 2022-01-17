@@ -24,7 +24,7 @@ async function updateBlog(newBlog, id) {
     const config = {
         headers: { Authorization: token },
     };
-
+    console.log(newBlog);
     const response = await axios.put(`${baseUrl}/${id}`, newBlog, config);
     return response.data;
 }

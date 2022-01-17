@@ -93,6 +93,12 @@ const App = () => {
         }
     }
 
+    async function updateBlog(blogToUpdate, id) {
+        const updatedBlog = await blogService.updateBlog(blogToUpdate, id);
+
+        setBlogs(blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog)));
+    }
+
     const loginForm = () => {
         return (
             <div>
@@ -137,7 +143,7 @@ const App = () => {
             {user && <p>{user.username} is logged in.</p>}
             <button onClick={() => logOut(setUser)}>Logout</button>
             {sortedBlogs.map((blog) => (
-                <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} />
+                <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} updateBlog={updateBlog} />
             ))}
             {blogForm()}
         </div>
