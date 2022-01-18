@@ -6,16 +6,25 @@ function LoginForm({ username, setUsername, password, setPassword, handleLogin }
     return (
         <form onSubmit={handleLogin}>
             <label htmlFor='Username'>Username: </label>
-            <input type='text' value={username} name='Username' onChange={({ target }) => setUsername(target.value)} />
+            <input
+                id='username'
+                type='text'
+                value={username}
+                name='Username'
+                onChange={({ target }) => setUsername(target.value)}
+            />
             <br />
             <label htmlFor='Password'>Password: </label>
             <input
+                id='password'
                 type='password'
                 value={password}
                 name='Password'
                 onChange={({ target }) => setPassword(target.value)}
             />
-            <button type='submit'>Login</button>
+            <button id='loginBtn' type='submit'>
+                Login
+            </button>
         </form>
     );
 }

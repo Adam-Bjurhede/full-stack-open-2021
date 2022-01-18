@@ -28,7 +28,7 @@ const Blog = ({ blog, deleteBlog, updateBlog }) => {
         return (
             <>
                 <p className='url'>{blog.url}</p>
-                <p>
+                <p className='likes'>
                     Likes: {blog.likes} <button onClick={handleLikeClick}>Like</button>{' '}
                 </p>
                 <p>{blog.author}</p>
@@ -38,7 +38,7 @@ const Blog = ({ blog, deleteBlog, updateBlog }) => {
     };
 
     return (
-        <div style={blogStyle}>
+        <div className='blog-wrap' style={blogStyle}>
             <div>
                 <span className='title'>{blog.title}</span> <span className='author'>{blog.author}</span>
                 <button onClick={() => setShowInfo(!showInfo)}>{showInfo ? 'Show Less' : 'Show More'}</button>
